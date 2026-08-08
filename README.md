@@ -89,6 +89,11 @@ grep -rqF "$NEXT_PUBLIC_ANALYTICS_DOMAIN" out/_next/static/chunks/ \
   || { echo "analytics would deploy OFF"; exit 1; }
 ```
 
+Grep the **whole chunks directory**, recursively. Do not target
+`layout-<hash>.js`: once this package is a dependency, the bundler commonly
+code-splits `<Analytics/>` into a shared chunk instead, and a grep pinned to
+the layout chunk then reports zero while everything works correctly.
+
 The load-bearing check is a real browser: open the site, and confirm the POST
 to `plausible.io/api/event` carries `"p":{"hostname":"<the serving host>"}`.
 A pageview row with no conversions beneath it means `track()` is not carrying
